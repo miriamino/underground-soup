@@ -26,7 +26,7 @@ SECRET_KEY = '0gm+f8#bq87+1lonh&$1)8=op@wu#e=-2diaj0ey^d$8_14=!_'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'mysterydjango.herokuapp.com']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'soup-underground.herokuapp.com']
 
 
 # Application definition
