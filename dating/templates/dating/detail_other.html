@@ -1,0 +1,30 @@
+{% extends "dating/base.html" %}
+{% block content %}
+
+<h1>{{ question.question_text }}</h1>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<form action="{% url 'dating:vote_other' question.id %}" method="post">
+    {% csrf_token %}
+    <h4>Unacceptable answer(s) for a potential match:</h4>
+    <h5>You can select multiple answers.</h5>
+    {% for choice in question.choice_set.all %}
+    <input type="checkbox" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
+    <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
+    {% endfor %}
+    <input type="radio" name="importance" id="importance1" value="0">
+    <label for="importance1">doesn't matter at all</label><br>
+    <input type="radio" name="importance" id="importance2" value="1">
+    <label for="importance2">a little</label><br>
+    <input type="radio" name="importance" id="importance3" value="50">
+    <label for="importance3">average</label><br>
+    <input type="radio" name="importance" id="importance4" value="250">
+    <label for="importance4">very important</label><br>
+    <input type="radio" name="importance" id="importance5" value="999">
+    <label for="importance5">don't show my profile to people who selected this</label><br>
+    <input type="checkbox" id="private" value="private" name="private">
+    <label for="private">Don't show my answers to other people</label><br>
+    <input type="submit" value="Submit" class="btn btn-primary">
+</form>
+{% endblock %}

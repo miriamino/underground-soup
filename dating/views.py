@@ -3,8 +3,9 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
+from django.views.generic.edit import FormView
 
-from .models import Question, Choice, Answers
+from .models import Question, Choice, Answer, User
 
 
 class IndexView(generic.ListView):
@@ -18,10 +19,9 @@ class IndexView(generic.ListView):
         """
         return Question.objects.filter(pub_date__lte=timezone.now()).order_by('-pub_date')[:5]
 
-
-class DetailView(generic.DetailView):
+class QuestionSelfView(generic.DetailView):
     model = Question
-    template_name = 'dating/detail.html'
+    template_name = 'dating/detail_self.html'
     
     def get_queryset(self):
         """
@@ -30,22 +30,58 @@ class DetailView(generic.DetailView):
         return Question.objects.filter(pub_date__lte=timezone.now())
 
 
+class QuestionOtherView(generic.DetailView):
+    model = Question
+    template_name = 'dating/detail_other.html'
+    
+    def get_queryset(self):
+        """
+        Excludes any questions that aren't published yet.
+        """
+        return Question.objects.filter(pub_date__lte=timezone.now())
 
-def vote(request, question_id):
+# class ProfileViewSelf(generic.ListView):
+#     model = Answer
+
+#     def get_queryset(self):
+        
+#         return Answer.objects.filter(user=request.user)
+
+def vote_self(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
-    try:
-        selected_choice = question.choice_set.get(pk=request.POST['choice'])
-    except (KeyError, Choice.DoesNotExist):
-        # Redisplay the question voting form.
-        return render(request, 'dating/detail.html', {
-            'question': question,
-            'error_message': "You didn't select a choice.",
-        })
+    selected_choice = question.choice_set.get(pk=request.POST['choice'])
+    if request.POST.get('private') == 'private':
+        public = False
     else:
-        Answers.objects.create(
-            user=request.user,
-            answer_self=selected_choice,
-            question=question,
-        )
-        redirect_url = reverse('dating:index')
-        return HttpResponseRedirect(redirect_url)
+        public = True
+    answer, created = Answer.objects.update_or_create(
+        user=request.user,
+        question=question,
+        defaults={ 
+            'public_self' : public, 
+            'answer_self' : selected_choice },
+    )
+    redirect_url = reverse('dating:detail_other', args=[question.id])
+    return HttpResponseRedirect(redirect_url)
+
+def vote_other(request, question_id):
+    question = get_object_or_404(Question, pk=question_id)
+    importance = request.POST.get('importance')
+    choicelist = request.POST.getlist('choice')
+    if request.POST.get('private') == 'private':
+        public = False
+    else:
+        public = True
+    answer, created = Answer.objects.update_or_create(
+                user=request.user,
+                question=question,
+                defaults= { 
+                    'public_other' : public,
+                    'importance' : importance,
+                    }
+            )
+    answer.answer_other.clear()
+    for c in choicelist:
+        answer.answer_other.add(question.choice_set.get(pk=c))
+    redirect_url = reverse('dating:index')
+    return HttpResponseRedirect(redirect_url)

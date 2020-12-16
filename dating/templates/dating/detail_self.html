@@ -1,16 +1,22 @@
 {% extends "dating/base.html" %}
+{% load static %}
 {% block content %}
-<h3>Answer for yourself:</h3>
+
 <h1>{{ question.question_text }}</h1>
 
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
-<form action="{% url 'dating:vote' question.id %}" method="post">
+<form action="{% url 'dating:vote_self' question.id %}" method="post">
     {% csrf_token %}
+
+    <h4>Your answer:</h4>
     {% for choice in question.choice_set.all %}
     <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
     <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
     {% endfor %}
-    <input type="submit" value="Continue">
+    <input type="checkbox" id="private" value="private" name="private">
+    <label for="private">Don't show my answers to other people</label><br>
+    <input type="submit" value="Submit" class="btn btn-primary">
 </form>
+
 {% endblock %}
