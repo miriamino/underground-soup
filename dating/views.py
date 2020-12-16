@@ -92,3 +92,5 @@ def vote_other(request, question_id):
         answer.answer_other.add(question.choice_set.get(pk=c))
     redirect_url = reverse('dating:index')
     return HttpResponseRedirect(redirect_url)
+
+
