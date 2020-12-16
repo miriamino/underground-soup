@@ -21,7 +21,7 @@
                 <dl>
                     <dt><b>Your answer:</b>
                     <dd> {{ answer.answer_self }}</dd>
-                    <dt><b>Answers you won't accept:</b></dt>
+                    <dt><b>Answers you'll accept:</b></dt>
                     {% for choice in answer.answer_other.all %}
                     <dd>{{choice.choice_text}}</dd>
                     {% endfor %}

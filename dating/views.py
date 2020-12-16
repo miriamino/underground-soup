@@ -54,7 +54,7 @@ class ProfileViewOther(LoginRequiredMixin, generic.ListView):
     template_name = "dating/profile_other.html"
 
     def get_queryset(self):
-        return Answer.objects.filter(user=User.objects.filter(username='testuser').first())
+        return Answer.objects.filter(user=User.objects.filter(username='gooduser').first())
 
 @login_required
 def vote_self(request, question_id):

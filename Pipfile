@@ -13,6 +13,7 @@ django-bootstrap4 = "~=2.3.1"
 pandas = "~=1.1"
 numpy = "~=1.19"
 django-pandas = "~=0.6.1"
+django-registration = "~=3.1.1"
 
 [dev-packages]
 
