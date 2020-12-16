@@ -4,11 +4,13 @@ from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
 from django.views.generic.edit import FormView
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .models import Question, Choice, Answer, User
 
 
-class IndexView(generic.ListView):
+class IndexView(LoginRequiredMixin, generic.ListView):
     template_name = 'dating/index.html'
     context_object_name = 'latest_question_list'
 
@@ -19,7 +21,7 @@ class IndexView(generic.ListView):
         """
         return Question.objects.filter(pub_date__lte=timezone.now()).order_by('-pub_date')[:5]
 
-class QuestionSelfView(generic.DetailView):
+class QuestionSelfView(LoginRequiredMixin, generic.DetailView):
     model = Question
     template_name = 'dating/detail_self.html'
     
@@ -30,7 +32,7 @@ class QuestionSelfView(generic.DetailView):
         return Question.objects.filter(pub_date__lte=timezone.now())
 
 
-class QuestionOtherView(generic.DetailView):
+class QuestionOtherView(LoginRequiredMixin, generic.DetailView):
     model = Question
     template_name = 'dating/detail_other.html'
     
@@ -40,20 +42,21 @@ class QuestionOtherView(generic.DetailView):
         """
         return Question.objects.filter(pub_date__lte=timezone.now())
 
-class ProfileViewSelf(generic.ListView):
+class ProfileViewSelf(LoginRequiredMixin, generic.ListView):
     model = Answer
     template_name = "dating/profile_self.html"
 
     def get_queryset(self):
         return Answer.objects.filter(user=self.request.user)
 
-class ProfileViewOther(generic.ListView):
+class ProfileViewOther(LoginRequiredMixin, generic.ListView):
     model = Answer
     template_name = "dating/profile_other.html"
 
     def get_queryset(self):
         return Answer.objects.filter(user=User.objects.filter(username='testuser').first())
 
+@login_required
 def vote_self(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
     selected_choice = question.choice_set.get(pk=request.POST['choice'])
@@ -71,6 +74,7 @@ def vote_self(request, question_id):
     redirect_url = reverse('dating:detail_other', args=[question.id])
     return HttpResponseRedirect(redirect_url)
 
+@login_required
 def vote_other(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
     importance = request.POST.get('importance')
