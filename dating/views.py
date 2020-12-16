@@ -40,12 +40,19 @@ class QuestionOtherView(generic.DetailView):
         """
         return Question.objects.filter(pub_date__lte=timezone.now())
 
-# class ProfileViewSelf(generic.ListView):
-#     model = Answer
+class ProfileViewSelf(generic.ListView):
+    model = Answer
+    template_name = "dating/profile_self.html"
 
-#     def get_queryset(self):
-        
-#         return Answer.objects.filter(user=request.user)
+    def get_queryset(self):
+        return Answer.objects.filter(user=self.request.user)
+
+class ProfileViewOther(generic.ListView):
+    model = Answer
+    template_name = "dating/profile_other.html"
+
+    def get_queryset(self):
+        return Answer.objects.filter(user=User.objects.filter(username='testuser').first())
 
 def vote_self(request, question_id):
     question = get_object_or_404(Question, pk=question_id)

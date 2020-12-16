@@ -1,0 +1,40 @@
+{% extends "dating/base.html" %}
+{% load static %}
+{% block content %}
+<h1>Answered Questions</h1>
+<div id="accordion">
+    {% for answer in object_list %}
+    <div class="card">
+        <div class="card-header" id="heading{{ forloop.counter }}">
+            <h5 class="mb-0">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse{{ forloop.counter }}"
+                    aria-expanded="true" aria-controls="collapse{{ forloop.counter }}">
+                    {{ answer.question }}
+                </button>
+            </h5>
+        </div>
+
+        <div id="collapse{{ forloop.counter }}" class="collapse show" aria-labelledby="heading{{ forloop.counter }}"
+            data-parent="#accordion">
+            <div class="card-body">
+                <h3></h3>
+                <dl>
+                    <dt><b>Their answer:</b>
+                    <dd> {{ answer.answer_self }}</dd>
+                    <dt><b>Answers you won't accept:</b></dt>
+                    {% for choice in answer.answer_other.all %}
+                    <dd>{{choice.choice_text}}</dd>
+                    {% endfor %}
+                </dl>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <li>No answers yet.</li>
+    {% endfor %}
+</div>
+
+
+
+
+{% endblock %}
