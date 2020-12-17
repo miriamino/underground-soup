@@ -22,7 +22,7 @@ class AnswerAdmin(admin.ModelAdmin):
         (None,               {'fields': ['user', 'question', 'answer_self', 'answer_other', 'importance', 'public_self', 'public_other']}),
         ('Date information', {'fields': ['answer_date'], 'classes': ['collapse']}),
     ]
-    list_display = ('user', 'question', 'answer_date')
+    list_display = ('user', 'public_self', 'public_other', 'answer_date')
     list_filter = ['answer_date','user']
     search_fields = ['question']
 

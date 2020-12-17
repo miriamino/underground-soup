@@ -10,5 +10,6 @@ urlpatterns = [
     path('<int:question_id>/vote_self/', views.vote_self, name='vote_self'),
     path('<int:question_id>/vote_other/', views.vote_other, name='vote_other'),
     path('profile/me', views.ProfileViewSelf.as_view(), name='profile_self'),
-    path('profile/<int:user_id>', views.profile_other, name='profile_other'),
+    path('profile/<slug:username>', views.profile_other, name='profile_other'),
+    path('potential_matches', views.MatchesView.as_view(), name='potential_matches'),
 ]

@@ -6,6 +6,7 @@ from django.utils import timezone
 from django.views.generic.edit import FormView
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q
 import pandas as pd
 import numpy as np
 
@@ -52,10 +53,22 @@ class ProfileViewSelf(LoginRequiredMixin, generic.ListView):
     def get_queryset(self):
         return Answer.objects.filter(user=self.request.user)
 
+class MatchesView(LoginRequiredMixin, generic.ListView):
+    model = Matching
+    template_name = "dating/potential_matches.html"
+    context_object_name = "matches"
+
+    def get_queryset(self):
+        return Matching.objects.filter(user=self.request.user)
+
 @login_required
-def profile_other(request, user_id):
-    answer_list = get_list_or_404(Answer.objects.filter(user_id=user_id))
-    return render(request, 'dating/profile_other.html', { 'answer_list': answer_list })
+def profile_other(request, username):
+    user_id = User.objects.get(username=username)
+    answer_list = get_list_or_404(Answer.objects.filter(user=user_id.pk))
+    score = get_object_or_404(Matching.objects.filter(user=request.user.pk, other_user=user_id.pk))
+    username = username
+    print(score.forward_score)
+    return render(request, 'dating/profile_other.html', { 'answer_list': answer_list, 'score' : score, 'username': username})
 
 @login_required
 def vote_self(request, question_id):

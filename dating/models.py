@@ -43,6 +43,6 @@ class Answer(models.Model):
 class Matching(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     other_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='other_user')
-    foreward_score = models.DecimalField(default=0, decimal_places=1, max_digits=5)
+    forward_score = models.DecimalField(default=0, decimal_places=1, max_digits=5)
     backward_score = models.DecimalField(default=0, decimal_places=1, max_digits=5)
     combined_score = models.DecimalField(default=0, decimal_places=1, max_digits=5)
