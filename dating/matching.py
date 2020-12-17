@@ -1,5 +1,3 @@
-from django.db import connection
-
 import pandas as pd
 import numpy as np
 
@@ -93,7 +91,7 @@ def update_matches(answer, user, matching, pd, np):
                     matching.objects.update_or_create(
                         user=user.objects.get(pk=i.pk),
                         other_user=user.objects.get(pk=j.pk),
-                        foreward_score=scores[0],
+                        forward_score=scores[0],
                         backward_score=scores[1],
                         combined_score=scores[2],
                     )
