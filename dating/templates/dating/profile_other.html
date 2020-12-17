@@ -4,12 +4,15 @@
 <h1>Answered Questions</h1>
 <div id="accordion">
     {% for answer in object_list %}
+    {% if answer.public_self and answer.public_other %}
     <div class="card">
         <div class="card-header" id="heading{{ forloop.counter }}">
             <h5 class="mb-0">
                 <button class="btn btn-link" data-toggle="collapse" data-target="#collapse{{ forloop.counter }}"
                     aria-expanded="true" aria-controls="collapse{{ forloop.counter }}">
+
                     {{ answer.question }}
+            
                 </button>
             </h5>
         </div>
@@ -17,20 +20,25 @@
         <div id="collapse{{ forloop.counter }}" class="collapse show" aria-labelledby="heading{{ forloop.counter }}"
             data-parent="#accordion">
             <div class="card-body">
-                <h3></h3>
                 <dl>
+                    {% if answer.public_self %}
                     <dt><b>Their answer:</b>
                     <dd> {{ answer.answer_self }}</dd>
-                    <dt><b>Answers you'll accept:</b></dt>
+                    {% endif %}
+                    {% if answer.public_other %}
+                    <dt><b>Answers they'll accept:</b></dt>
                     {% for choice in answer.answer_other.all %}
                     <dd>{{choice.choice_text}}</dd>
                     {% endfor %}
+                    {% endif %}
                 </dl>
             </div>
         </div>
     </div>
+    {% endif %}
     {% empty %}
     <li>No answers yet.</li>
+    
     {% endfor %}
 </div>
 

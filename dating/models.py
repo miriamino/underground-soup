@@ -27,7 +27,7 @@ class Answer(models.Model):
         SLIGHTLY = 1, _('a little')
         MEDIUM = 50, _('average')
         VERY_IMPORTANT = 250, _('very important')
-        MANDATORY = 999, _('don\'t show my profile to people who selected this')
+        MANDATORY = 300, _('mandatory')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     answer_self = models.ForeignKey(Choice, on_delete=models.CASCADE, null=True)
