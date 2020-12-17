@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, get_list_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.views import generic
@@ -6,8 +6,11 @@ from django.utils import timezone
 from django.views.generic.edit import FormView
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+import pandas as pd
+import numpy as np
 
-from .models import Question, Choice, Answer, User
+from .models import Question, Choice, Answer, User, Matching
+from .matching import update_matches
 
 
 class IndexView(LoginRequiredMixin, generic.ListView):
@@ -49,12 +52,10 @@ class ProfileViewSelf(LoginRequiredMixin, generic.ListView):
     def get_queryset(self):
         return Answer.objects.filter(user=self.request.user)
 
-class ProfileViewOther(LoginRequiredMixin, generic.ListView):
-    model = Answer
-    template_name = "dating/profile_other.html"
-
-    def get_queryset(self):
-        return Answer.objects.filter(user=User.objects.filter(username='gooduser').first())
+@login_required
+def profile_other(request, user_id):
+    answer_list = get_list_or_404(Answer.objects.filter(user_id=user_id))
+    return render(request, 'dating/profile_other.html', { 'answer_list': answer_list })
 
 @login_required
 def vote_self(request, question_id):
@@ -72,6 +73,7 @@ def vote_self(request, question_id):
             'answer_self' : selected_choice },
     )
     redirect_url = reverse('dating:detail_other', args=[question.id])
+    update_matches(Answer, User, Matching, pd, np)
     return HttpResponseRedirect(redirect_url)
 
 @login_required
@@ -95,6 +97,7 @@ def vote_other(request, question_id):
     for c in choicelist:
         answer.answer_other.add(question.choice_set.get(pk=c))
     redirect_url = reverse('dating:index')
+    update_matches(Answer, User, Matching, pd, np)
     return HttpResponseRedirect(redirect_url)
 
 
