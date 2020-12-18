@@ -3,14 +3,18 @@
 {% block content %}
 
 <h1>{{ username }}'s profile</h1>
+
 <div class="progress">
     <div class="progress-bar bg-success" role="progressbar" style="width: {{ score.forward_score }}%" aria-valuenow="25" aria-valuemin="0"
         aria-valuemax="100">{{ score.forward_score }}%</div>
 </div>
+<b>How much they match you:</b>
+<br>
 <div class="progress">
     <div class="progress-bar bg-success" role="progressbar" style="width: {{ score.backward_score }}%" aria-valuenow="25" aria-valuemin="0"
         aria-valuemax="100">{{ score.backward_score }}%</div>
 </div>
+<b>How much you match for them:</b>
 
 <h1>Answered Questions</h1>
 <div id="accordion">

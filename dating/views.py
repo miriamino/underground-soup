@@ -23,7 +23,7 @@ class IndexView(LoginRequiredMixin, generic.ListView):
         Return the last five published questions (not including those set to be
         published in the future).
         """
-        return Question.objects.filter(pub_date__lte=timezone.now()).order_by('-pub_date')[:100]
+        return Question.objects.filter(pub_date__lte=timezone.now()).order_by('-pub_date')
 
 class QuestionSelfView(LoginRequiredMixin, generic.DetailView):
     model = Question
@@ -44,14 +44,14 @@ class QuestionOtherView(LoginRequiredMixin, generic.DetailView):
         """
         Excludes any questions that aren't published yet.
         """
-        return Question.objects.filter(pub_date__lte=timezone.now())[:20]
+        return Question.objects.filter(pub_date__lte=timezone.now())
 
 class ProfileViewSelf(LoginRequiredMixin, generic.ListView):
     model = Answer
     template_name = "dating/profile_self.html"
 
     def get_queryset(self):
-        return Answer.objects.filter(user=self.request.user)[:20]
+        return Answer.objects.filter(user=self.request.user)
 
 class MatchesView(LoginRequiredMixin, generic.ListView):
     model = Matching
@@ -59,7 +59,7 @@ class MatchesView(LoginRequiredMixin, generic.ListView):
     context_object_name = "matches"
 
     def get_queryset(self):
-        return Matching.objects.filter(user=self.request.user)[3:30]
+        return Matching.objects.order_by('-forward_score').filter(user=self.request.user)
 
 @login_required
 def profile_other(request, username):
@@ -67,7 +67,6 @@ def profile_other(request, username):
     answer_list = get_list_or_404(Answer.objects.filter(user=user_id.pk))
     score = get_object_or_404(Matching.objects.filter(user=request.user.pk, other_user=user_id.pk))
     username = username
-    print(score.forward_score)
     return render(request, 'dating/profile_other.html', { 'answer_list': answer_list, 'score' : score, 'username': username})
 
 @login_required

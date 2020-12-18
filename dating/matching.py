@@ -108,6 +108,7 @@ def update_matches(user_id, answer, user, matching, pd, np):
                     combined_score=scores[2],
                 )
 
-# update_matches(239, Answer, User, Matching, pd, np)
+
+# update_matches(1, Answer, User, Matching, pd, np)
 # user = User.objects.get(username='boredPonie1-sim')
 # print(user.pk)
