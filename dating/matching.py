@@ -68,21 +68,26 @@ def update_matches(answer, user, matching, pd, np):
             return data
 
         datapair = get_pair(user1, user2, data)
-        if datapair.size == 0:
+        if len(datapair.index) < 2:
             return None
         commonanswers = common_answers(datapair)
-        if commonanswers.size == 0:
+        if len(commonanswers.index) < 2:
             return None
-        userdata = user_data(commonanswers, user1, user2)
-        scoredata1 = get_scores(userdata)
+        userdata1 = user_data(commonanswers, user1, user2)
+        if len(userdata1.index) < 2:
+            return None
+        scoredata1 = get_scores(userdata1)
         score1 = round(100*scoredata1['avg_score'][0])
         userdata2 = user_data(commonanswers, user2, user1)
+        if len(userdata2.index) < 2:
+            return None
         scoredata2 = get_scores(userdata2)
         score2 = round(100*scoredata2['avg_score'][0])
         combined = (score1 + score2)/2
         return score1, score2, combined
 
     data =  get_data(answer, pd, np)
+# todo only calculate pair once
     for i in user.objects.all():
         for j in user.objects.all():
             if i != j:
@@ -95,3 +100,12 @@ def update_matches(answer, user, matching, pd, np):
                         backward_score=scores[1],
                         combined_score=scores[2],
                     )
+                    matching.objects.update_or_create(
+                        user=user.objects.get(pk=j.pk),
+                        other_user=user.objects.get(pk=i.pk),
+                        forward_score=scores[1],
+                        backward_score=scores[0],
+                        combined_score=scores[2],
+                    )
+
+# update_matches(Answer, User, Matching, pd, np)

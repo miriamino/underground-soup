@@ -86,7 +86,6 @@ def vote_self(request, question_id):
             'answer_self' : selected_choice },
     )
     redirect_url = reverse('dating:detail_other', args=[question.id])
-    update_matches(Answer, User, Matching, pd, np)
     return HttpResponseRedirect(redirect_url)
 
 @login_required
@@ -110,7 +109,6 @@ def vote_other(request, question_id):
     for c in choicelist:
         answer.answer_other.add(question.choice_set.get(pk=c))
     redirect_url = reverse('dating:index')
-    update_matches(Answer, User, Matching, pd, np)
     return HttpResponseRedirect(redirect_url)
 
 
