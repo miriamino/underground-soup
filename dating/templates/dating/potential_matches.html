@@ -8,7 +8,7 @@
         <h5 class="card-title">{{ match.other_user }}</h5>
         <h6 class="card-subtitle mb-2 text-muted">{{ match.combined_score }} % match </h6>
         <p class="card-text">this is where further infos about the user will be displayed </p>
-        <a href="{% url 'dating:profile_other' match.other_user %} class=" card-link">open their profile</a>
+        <a href="{% url 'dating:profile_other' match.other_user %}" class= card-link">open their profile</a>
     </div>
 </div>
 {% endif %}

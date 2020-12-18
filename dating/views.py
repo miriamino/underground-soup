@@ -44,14 +44,14 @@ class QuestionOtherView(LoginRequiredMixin, generic.DetailView):
         """
         Excludes any questions that aren't published yet.
         """
-        return Question.objects.filter(pub_date__lte=timezone.now())
+        return Question.objects.filter(pub_date__lte=timezone.now())[:20]
 
 class ProfileViewSelf(LoginRequiredMixin, generic.ListView):
     model = Answer
     template_name = "dating/profile_self.html"
 
     def get_queryset(self):
-        return Answer.objects.filter(user=self.request.user)
+        return Answer.objects.filter(user=self.request.user)[:20]
 
 class MatchesView(LoginRequiredMixin, generic.ListView):
     model = Matching
@@ -59,7 +59,7 @@ class MatchesView(LoginRequiredMixin, generic.ListView):
     context_object_name = "matches"
 
     def get_queryset(self):
-        return Matching.objects.filter(user=self.request.user)
+        return Matching.objects.filter(user=self.request.user)[3:30]
 
 @login_required
 def profile_other(request, username):

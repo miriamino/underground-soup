@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 
 from dating.models import Answer, User, Matching
-def update_matches(answer, user, matching, pd, np):
+def update_matches(user_id, answer, user, matching, pd, np):
     def get_data(answer, pd, np):
         qu = answer.objects.all().prefetch_related('answer_other')
 
@@ -87,25 +87,27 @@ def update_matches(answer, user, matching, pd, np):
         return score1, score2, combined
 
     data =  get_data(answer, pd, np)
-# todo only calculate pair once
-    for i in user.objects.all():
-        for j in user.objects.all():
-            if i != j:
-                scores = matching_scores(i.pk, j.pk, data)
-                if scores != None:
-                    matching.objects.update_or_create(
-                        user=user.objects.get(pk=i.pk),
-                        other_user=user.objects.get(pk=j.pk),
-                        forward_score=scores[0],
-                        backward_score=scores[1],
-                        combined_score=scores[2],
-                    )
-                    matching.objects.update_or_create(
-                        user=user.objects.get(pk=j.pk),
-                        other_user=user.objects.get(pk=i.pk),
-                        forward_score=scores[1],
-                        backward_score=scores[0],
-                        combined_score=scores[2],
-                    )
+# todo only calculate each pair once
 
-# update_matches(Answer, User, Matching, pd, np)
+    for i in user.objects.all():
+        if i != user_id:
+            scores = matching_scores(user_id, i.pk, data)
+            if scores != None:
+                matching.objects.update_or_create(
+                    user=user.objects.get(pk=user_id),
+                    other_user=user.objects.get(pk=i.pk),
+                    forward_score=scores[0],
+                    backward_score=scores[1],
+                    combined_score=scores[2],
+                )
+                matching.objects.update_or_create(
+                    user=user.objects.get(pk=i.pk),
+                    other_user=user.objects.get(pk=user_id),
+                    forward_score=scores[1],
+                    backward_score=scores[0],
+                    combined_score=scores[2],
+                )
+
+# update_matches(239, Answer, User, Matching, pd, np)
+# user = User.objects.get(username='boredPonie1-sim')
+# print(user.pk)
